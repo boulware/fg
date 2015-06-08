@@ -14,3 +14,9 @@ Debug::WriteString(std::string StringToWrite)
 {
     OutputDebugStringA((LPCTSTR)StringToWrite.c_str());
 }
+
+void
+Debug::WriteError(std::string StringToWrite)
+{
+    OutputDebugStringA((LPCTSTR)("ERROR: " + StringToWrite).c_str());    
+}
