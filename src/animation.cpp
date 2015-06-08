@@ -18,12 +18,8 @@ void animation::LoadFrameDirectory(std::string PathDirectory)
     uint16 File = 0;
 
     std::string Path = PathDirectory + std::to_string(File) + ".png";
-
-//    std::string Test = Directory + std::to_string(File) + ".png";
     
     std::ifstream Stream(Path);
-
-    
     
     while(Stream.good())
     {
@@ -31,7 +27,9 @@ void animation::LoadFrameDirectory(std::string PathDirectory)
         
         Frames.push_back({Path});
 
-        Stream.open(PathDirectory + std::to_string(++File) + ".png");
+        Path = PathDirectory + std::to_string(++File) + ".png";
+        
+        Stream.open(Path);
     }
 }
 
