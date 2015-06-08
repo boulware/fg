@@ -55,16 +55,16 @@ game::HandleInput()
     {
         Paused = !Paused;
     }
-    if(ThisFrameInput.FrameAdvance.WasPressed)
+    if(Paused)
     {
-        if(Paused)
+        if(ThisFrameInput.FrameAdvance.WasPressed)
         {
             HandleInput();
             Update();
         }
+        Blit();
     }
     
-    Blit();
 //    Blit();
 }
 

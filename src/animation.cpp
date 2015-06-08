@@ -13,19 +13,25 @@ animation::AppendFrame(std::string Filename)
     Frames.push_back({Filename});
 }
 
-void animation::LoadFrameDirectory(std::string Directory)
-{
+void animation::LoadFrameDirectory(std::string PathDirectory)
+{   
     uint16 File = 0;
+
+    std::string Path = PathDirectory + std::to_string(File) + ".png";
+
+//    std::string Test = Directory + std::to_string(File) + ".png";
     
-    std::ifstream Stream(Directory + std::to_string(File) + ".png");
+    std::ifstream Stream(Path);
+
+    
     
     while(Stream.good())
     {
         Stream.close();
         
-        Frames.push_back({Directory + std::to_string(File++) + ".png"});
+        Frames.push_back({Path});
 
-        Stream.open(Directory + std::to_string(File) + ".png");
+        Stream.open(PathDirectory + std::to_string(++File) + ".png");
     }
 }
 

@@ -10,7 +10,6 @@
 
 #include "win32_Debug.h"
 #include "game.h"
-#include "timer.h"
 
 #include "win32_Debug.cpp"
 #include "bitmap.cpp"
@@ -20,7 +19,6 @@
 #include "collision_box.cpp"
 #include "skeleton.cpp"
 #include "fighter.cpp"
-#include "timer.cpp"
 #include "Color.cpp"
 #include "animation.cpp"
 
@@ -97,15 +95,15 @@ WinMain(
     LPSTR     CommandLine,
     int       CommandShow)
 {
-    timer::Initialize();
-    
+//    timer::Initialize();
     Global::Window = SetUpWindow(Instance);
     Global::Game = new game;
     
     MSG Message;
 
     uint8 Loops;
-    time NextGameTick = timer::GetProgramTime();
+    sf::Clock GameClock;
+    sf::Time NextGameTick = GameClock.getElapsedTime();
     
     while(Global::Game->IsRunning)
     {   
@@ -120,7 +118,7 @@ WinMain(
         if(Global::Game->Paused == false)
         {
             Loops = 0;
-            while(timer::GetProgramTime() > NextGameTick && Loops < Global::MaxFrameSkip)
+            while(GameClock.getElapsedTime() > NextGameTick && Loops < Global::MaxFrameSkip)
             {
                 Global::Game->HandleInput();
                 Global::Game->Update();
@@ -128,9 +126,8 @@ WinMain(
                 NextGameTick += Global::FrameTime;
                 Loops++;
             }
-      
+            
             Global::Game->Blit();
-//            OutputDebugStringA("In the loop!\n");
         }
         else
         {
@@ -141,13 +138,20 @@ WinMain(
 
 //            NextGameTick += Global::FrameTime;
 //                Global::Game->HandleInput();
-                
+            while(GameClock.getElapsedTime() > NextGameTick)
+            {
+                Global::Game->HandleInput();
+
+                NextGameTick += Global::FrameTime;
+            }
+/*
             while(timer::GetProgramTime() > NextGameTick)
             {
                 Global::Game->HandleInput();
 
                 NextGameTick += Global::FrameTime;
-                }
+            }
+*/
         }
         
         //Debug::Write(timer::GetProgramTime().GetTime(unit::ms), "Elapsed Time(ms)");

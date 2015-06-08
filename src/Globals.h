@@ -4,7 +4,7 @@
 
 #include "Constants.h"
 
-#include "timer.h"
+#include "SFML/System.hpp"
 
 class game;
 
@@ -15,10 +15,10 @@ namespace Global
 
     // Game loop variables
     global_variable double UpdatesPerSecond = 60.0;
-    global_variable time FrameTime = time(1.0/Global::UpdatesPerSecond, unit::s);
+    global_variable sf::Time FrameTime = sf::seconds(1.0/UpdatesPerSecond);
     global_variable uint16 MaxFrameSkip = 10;
 
-    std::string ImagePath = "w:/fg/build/img/";
+    std::string ImagePath = "w:/build/fg/img/";
 
     bool32 DebugMode = false;
 }

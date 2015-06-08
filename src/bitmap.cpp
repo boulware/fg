@@ -1,27 +1,29 @@
 #include "bitmap.h"
 
-//#include "SFML\Graphics.hpp"
+#include "SFML\Graphics.hpp"
+
+#include <string>
 
 bitmap::bitmap(std::string Filename)
+        :
+        Width(0), Height(0)
 {
-    std::vector<uint8> image;
-    std::vector<uint8> png;
-    uint32 Width, Height;
-//    uint32 Width = 0;
-//    uint32 Height = 0;
+    const std::string Path = Filename;
     
-    lodepng::load_file(png, Filename);
+    sf::Image image;
 
-    lodepng_inspect(&Width, &Height, &lodepng::State(), &png[0], png.size());
+    if(image.loadFromFile(Path))
+    {
+        Width = image.getSize().x;
+        Height = image.getSize().y;
 
-    Pixels = new uint32[Width * Height];
+        Pixels = new uint32[Width * Height]();
     
-    lodepng::decode(image, Width, Height, png);
-    
-    memcpy((void*)Pixels, (void*)&image[0], Width * Height * BytesPerPixel);
+        memcpy((void*)Pixels, (void*)image.getPixelsPtr(), Width * Height * BytesPerPixel);
+    }
 
     Pitch = BytesPerPixel * Width;
-
+    
     Info = {};
     
     Info.bmiHeader.biSize = sizeof(Info.bmiHeader);
@@ -29,10 +31,7 @@ bitmap::bitmap(std::string Filename)
     Info.bmiHeader.biHeight = -Height;
     Info.bmiHeader.biPlanes = 1;
     Info.bmiHeader.biBitCount = 32;
-    Info.bmiHeader.biCompression = BI_RGB;
-
-    this->Width = Width;
-    this->Height = Height;
+    Info.bmiHeader.biCompression = BI_RGB;    
 }
 
 bitmap::bitmap(uint32 Width, uint32 Height) : Width(Width), Height(Height)
