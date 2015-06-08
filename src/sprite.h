@@ -2,7 +2,6 @@
 
 #include "Constants.h"
 #include "bitmap.h"
-#include "extern/lodepng.h"
 
 enum alignment : int8
 {

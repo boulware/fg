@@ -4,7 +4,7 @@
 
 // External libraries
 
-#include "extern/lodepng.cpp"
+#include "SFML/System.hpp"
 
 // ------------------
 
