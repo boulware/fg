@@ -17,11 +17,21 @@ bitmap::bitmap(std::string Filename)
         Width = image.getSize().x;
         Height = image.getSize().y;
 
-        Pixels = new uint32[Width * Height]();
+        Pixels = new uint32[Width * Height];
     
         memcpy((void*)Pixels, (void*)image.getPixelsPtr(), Width * Height * BytesPerPixel);
     }
+    else
+    {
+        Debug::WriteError("Failed to load image [Path=" + Path + "]\n");
 
+        Width = Global::LoadFailBitmap.Width;
+        Height = Global::LoadFailBitmap.Height;
+
+        Pixels = new uint32[Width * Height];
+        
+        memcpy((void*)Pixels, (void*)Global::LoadFailBitmap.Pixels, Global::LoadFailBitmap.GetSizeInBytes());
+    }
     
     Info = {};
     
