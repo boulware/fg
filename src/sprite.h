@@ -24,7 +24,7 @@ public:
     sprite(uint16, uint16, bool32);
     ~sprite();
     
-    void Blit(bitmap*, int16, int16, alignment, alignment);
+    void Blit(int16, int16, alignment, alignment);
 };
 
 #define SPRITE_H

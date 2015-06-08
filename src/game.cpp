@@ -5,17 +5,16 @@ game::game()
         PrevFrameInput(),
         ThisFrameInput(),
         Fighter(100, 500),
-        Buffer(WindowWidth, WindowHeight),
+//        Buffer(Const::WindowWidth, Const::WindowHeight),
         Paused(false),
         AdvancingFrame(false)
 {   
-    RECT rc;
-    GetClientRect(Global::Window, &rc);
+    //RECT rc;
+    //GetClientRect(Global::Window, &rc);
 
     Fighter.Animation.LoadFrameDirectory(Global::ImagePath + "RedSquare/Neutral/");
 
     IsRunning = true;
-
 }
 
 void
@@ -28,11 +27,14 @@ game::Update()
 void
 game::Blit()
 {
-    Buffer.Clear({255, 0, 0, 0});
-
-    Fighter.Blit(&Buffer);
+    //Buffer.Clear({255, 0, 0, 0});
+    Global::Window.clear({30, 30, 30, 255});
     
-    Blit::BlitBufferToWindow(&Buffer, Global::Window);
+    Fighter.Blit();
+
+    Global::Window.display();
+    
+    //Blit::BlitBufferToWindow(&Buffer, Global::Window);
 
     if(AdvancingFrame)
     {

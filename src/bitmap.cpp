@@ -19,7 +19,7 @@ bitmap::bitmap(std::string Filename)
 
         Pixels = new uint32[Width * Height];
     
-        memcpy((void*)Pixels, (void*)image.getPixelsPtr(), Width * Height * BytesPerPixel);
+        memcpy((void*)Pixels, (void*)image.getPixelsPtr(), Width * Height * Const::BytesPerPixel);
     }
     else
     {
@@ -64,7 +64,7 @@ bitmap::bitmap(const bitmap& Other)
     Info = Other.Info;
 
     Pixels = new uint32[Width * Height];
-    memcpy((void*)Pixels, (void*)Other.Pixels, Width * Height * BytesPerPixel);
+    memcpy((void*)Pixels, (void*)Other.Pixels, Width * Height * Const::BytesPerPixel);
 }
 
 void
@@ -74,7 +74,7 @@ bitmap::operator=(const bitmap& Other)
     Height = Other.Height;
     Info = Other.Info;
     Pixels = new uint32[Width * Height];
-    memcpy((void*)Pixels, (void*)Other.Pixels, Width * Height * BytesPerPixel);
+    memcpy((void*)Pixels, (void*)Other.Pixels, Width * Height * Const::BytesPerPixel);
 }
 
 bitmap::~bitmap()

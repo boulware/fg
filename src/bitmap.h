@@ -16,7 +16,7 @@ public:
     uint32 Width;
     uint32 Height;
 
-    uint64 GetSizeInBytes() const { return Width * Height * BytesPerPixel; }
+    uint64 GetSizeInBytes() const { return Width * Height * Const::BytesPerPixel; }
     void Clear(rgba_color ClearColor = {255, 0, 0, 0});
 };
 

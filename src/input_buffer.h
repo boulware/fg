@@ -134,10 +134,12 @@ FetchAndParseInput(input_buffer* ThisFrameInput, input_buffer* PrevFrameInput)
     POINT CursorPosition = {};
     GetCursorPos(&CursorPosition);
 
+    /*
     ScreenToClient(Global::Window, &CursorPosition);
     
     ThisFrameInput->MouseX = CursorPosition.x;
     ThisFrameInput->MouseY = CursorPosition.y;
+    */
 }
 
 #define INPUT_BUFFER_H

@@ -18,11 +18,13 @@ typedef uint64_t uint64;
 typedef float real32;
 typedef double real64;
 
-global_variable uint16 MillisecondsPerSecond = 1000;
+namespace Const
+{
+    global_variable uint16 MillisecondsPerSecond = 1000;
 
-global_variable uint8 BytesPerPixel = 4;
-global_variable uint16 WindowWidth = 720;
-global_variable uint16 WindowHeight = 720;
-
+    global_variable uint8 BytesPerPixel = 4;
+    global_variable uint16 WindowWidth = 720;
+    global_variable uint16 WindowHeight = 720;
+}
 #define CONSTANTS_H
 #endif

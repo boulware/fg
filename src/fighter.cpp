@@ -219,7 +219,7 @@ fighter::Update()
 }
 
 void
-fighter::Blit(bitmap* DestBitmap)
+fighter::Blit()
 {
-    Animation.Blit(DestBitmap, X, Y);
+    Animation.Blit(X, Y);
 }

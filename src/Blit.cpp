@@ -28,7 +28,7 @@ ARGBtoABGR(uint32 Pixel)
 namespace Blit
 {
     void
-    BlitBitmap(bitmap *SrcBitmap, bitmap *DestBitmap,
+    BlitBitmap(sf::Image SrcImage,
                int16 SrcX, int16 SrcY,
                int16 DestX, int16 DestY,
                uint16 Width, uint16 Height,
@@ -48,19 +48,39 @@ namespace Blit
             Height = max(Height + DestY, 0);
             DestY = 0;
         }
-        if(DestX + Width > DestBitmap->Width)
+        if(DestX + Width > Global::Window.getSize().x)
         {
-            Width = max((int32)DestBitmap->Width - DestX, 0);
+            Width = max(Global::Window.getSize().x - DestX, 0);
         }
-        if(DestY + Height > DestBitmap->Height)
+        if(DestY + Height > Global::Window.getSize().y)
         {
-            Height = max((int32)DestBitmap->Height - DestY, 0);
+            Height = max(Global::Window.getSize().y - DestY, 0);
         }
+
+
+        sf::Texture Texture;
+        Texture.loadFromImage(SrcImage);
+
+        sf::Sprite Sprite;
+        Sprite.setTexture(Texture);
+        Sprite.setPosition(DestX, DestY);
         
-        //std::vector<uint32>::iterator SrcOrigin = SrcBitmap->Pixels.begin() + SrcX + SrcY * SrcBitmap->Width;
-        //std::vector<uint32>::iterator DestOrigin = DestBitmap->Pixels.begin() + DestX + DestY * DestBitmap->Width;
-        uint32* SrcOrigin = SrcBitmap->Pixels + SrcX + SrcY * SrcBitmap->Width;
-        uint32* DestOrigin = DestBitmap->Pixels + DestX + DestY * DestBitmap->Width;
+        Global::Window.draw(Sprite);
+        
+        //sf::Texture SrcTexture;
+        /*bool32 LoadTextureBool = SrcTexture.loadFromMemory((void*)SrcBitmap->Pixels,
+                                                           SrcBitmap->GetSizeInBytes()/*,
+                                                           {SrcX, SrcY, Width, Height});*/
+        
+    //        sf::Sprite SrcSprite(SrcTexture);
+        
+
+
+    //        uint32* SrcOrigin = SrcBitmap->Pixels + SrcX + SrcY * SrcBitmap->Width;
+//        uint32* DestOrigin = DestBitmap->Pixels + DestX + DestY * DestBitmap->Width;
+
+//                        Global::Window.draw(SrcSprite);
+                        /*
         for(uint16 Y = 0;
             Y < Height;
             ++Y)
@@ -69,36 +89,26 @@ namespace Blit
                 X < Width;
                 ++X)
             {
-                //std::vector<uint32>::iterator SrcPixel = SrcOrigin + X + SrcBitmap->Width * Y;
-                //std::vector<uint32>::iterator DestPixel = DestOrigin + X + DestBitmap->Width * Y;
-                uint32* SrcPixel = SrcOrigin + X + SrcBitmap->Width * Y;
-                uint32* DestPixel = DestOrigin + X + DestBitmap->Width * Y;
-//                uint32* DestPixel = DestOrigin + X + DestBitmap->Width * Y;
+        
 //                uint32* SrcPixel = SrcOrigin + X + SrcBitmap->Width * Y;
+//                uint32* DestPixel = DestOrigin + X + DestBitmap->Width * Y;
+
+                
                 
                 if(Transparency)
                 {
-//                DestPixel = BlendColors(DestPixel, SrcPixel);
+
                     *DestPixel = ABGRtoARGB(BlendColors(ARGBtoABGR(*DestPixel), *SrcPixel));//RGBAtoARGB(BlendColors(*DestPixel, *SrcPixel));
                 }
                 else
                 {
-                    *DestPixel = ABGRtoARGB(*SrcPixel);//RGBAtoARGB(*SrcPixel);
+                    *DestPixel = ABGRtoARGB(*SrcPixel);
                 }
-                //DestPixel = BlendPixels(DestPixel, SrcPixel);
-                
-                /*
-                if((CurrentPixel & (0x00FFFFFF)) != 0x00FF00FF)
-                {
-                    *(DestOrigin + X + DestBitmap->Width * Y) = *(SrcOrigin + X + SrcBitmap->Width * Y);
-                }
-                else
-                {
-                    *(DestOrigin + X + DestBitmap->Width * Y) = *(SrcOrigin + X + SrcBitmap->Width * Y);                    
-                }
-                */
+
+                    
             }
         }
+                        */
     }
     
     void
@@ -111,11 +121,13 @@ namespace Blit
     {
         
         if(!Outline)
-        {    
-            bitmap Rectangle(Width, Height);
-            Rectangle.Clear(Color);
+        {
+//            bitmap Rectangle(Width, Height);
+//            Rectangle.Clear(Color);
+            sf::Image TestImage;
+            TestImage.create(Width, Height);
         
-            BlitBitmap(&Rectangle, DestBitmap,
+            BlitBitmap(TestImage,
                        0, 0,
                        XOffset, YOffset,
                        Width, Height,

@@ -5,6 +5,7 @@
 // External libraries
 
 #include "SFML/System.hpp"
+#include "SFML/Window.hpp"
 
 // ------------------
 
@@ -67,7 +68,7 @@ SetUpWindow(HINSTANCE Instance)
                                  "MainWindowClass", "Window Name",
                                  WS_VISIBLE|WS_SYSMENU,
                                  CW_USEDEFAULT, CW_USEDEFAULT,
-                                 WindowWidth, WindowHeight,
+                                 Const::WindowWidth, Const::WindowHeight,
                                  0, 0,
                                  Instance, 0);
     
@@ -95,8 +96,19 @@ WinMain(
     LPSTR     CommandLine,
     int       CommandShow)
 {
+    AllocConsole();
+    freopen("conin$","r",stdin);
+    freopen("conout$","w",stdout);
+    freopen("conout$","w",stderr);
+    printf("Debugging Window:\n");
+    
+//    std::ofstream file("sfml-log.txt");
+//    std::streambuf* previous = sf::err().rdbuf(file.rdbuf());
+    
+    Global::Window.create(sf::VideoMode(Const::WindowWidth, Const::WindowHeight, 8 * Const::BytesPerPixel), "fg");
+    Global::Window.display();
 //    timer::Initialize();
-    Global::Window = SetUpWindow(Instance);
+//    Global::Window = SetUpWindow(Instance);
     Global::Game = new game;
     
     MSG Message;
@@ -104,8 +116,49 @@ WinMain(
     uint8 Loops;
     sf::Clock GameClock;
     sf::Time NextGameTick = GameClock.getElapsedTime();
-    
+
     while(Global::Game->IsRunning)
+    {
+        sf::Event Event;
+        while(Global::Window.pollEvent(Event))
+        {
+            if(Event.type == sf::Event::Closed)
+            {
+                Global::Game->IsRunning = false;
+                Global::Window.close();
+            }
+        }
+        
+        if(Global::Game->Paused == false)
+        {
+            Loops = 0;
+            while(GameClock.getElapsedTime() > NextGameTick && Loops < Global::MaxFrameSkip)
+            {
+                Global::Game->HandleInput();
+                Global::Game->Update();
+
+                NextGameTick += Global::FrameTime;
+                Loops++;
+            }
+        }
+        else
+        {
+            // TODO(tyler): This frame advance does not work with WasPressed things in input_buffer.
+            // Reason unknown. Fix ASAP.
+            while(GameClock.getElapsedTime() > NextGameTick)
+            {
+                Global::Game->HandleInput();
+
+                NextGameTick += Global::FrameTime;
+            }
+        }
+        
+        Global::Game->Blit(); 
+    }
+
+    /*
+      
+      while(Global::Game->IsRunning)
     {   
         while(PeekMessage(&Message, Global::Window, 0, 0, PM_REMOVE))
         {
@@ -151,12 +204,11 @@ WinMain(
 
                 NextGameTick += Global::FrameTime;
             }
-*/
         }
         
         //Debug::Write(timer::GetProgramTime().GetTime(unit::ms), "Elapsed Time(ms)");
     }
-    
+    */
     return(0);
 }
 

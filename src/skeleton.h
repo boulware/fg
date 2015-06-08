@@ -18,7 +18,7 @@ public:
     
     void AttachCollisionBox(collision_box CollisionBox, int16 XPosition, int16 YPosition);
 
-    void Blit(bitmap* DestBitmap, int16 XOrigin, int16 YOrigin);
+    void Blit(int16 XOrigin, int16 YOrigin);
 };
 
 #define SKELETON_H

@@ -88,7 +88,7 @@ public:
     
     void HandleInput(input_buffer* Input);
     void Update();
-    void Blit(bitmap*);
+    void Blit();
 };
 
 #define FIGHTER_H

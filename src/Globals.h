@@ -7,13 +7,14 @@
 #include "bitmap.h"
 
 #include "SFML/System.hpp"
+#include "SFML/Graphics.hpp"
 
 class game;
 
 namespace Global
 {
     global_variable game* Game;
-    global_variable HWND Window;
+    global_variable sf::RenderWindow Window;
 
     // Game loop variables
     global_variable double UpdatesPerSecond = 60.0;

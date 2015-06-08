@@ -40,17 +40,15 @@ animation::AdvanceFrame()
 }
 
 void
-animation::Blit(bitmap* DestBitmap, int16 XOffset, int16 YOffset)
+animation::Blit(int16 XOffset, int16 YOffset)
 {
     if(Frames.size() > 0)
     {
-        Frames[CurrentFrame].Sprite.Blit(DestBitmap,
-                                         XOffset, YOffset,
+        Frames[CurrentFrame].Sprite.Blit(XOffset, YOffset,
                                          alignment::Center, alignment::Left);
         if(Global::DebugMode)
         {
-            Frames[CurrentFrame].Skeleton.Blit(DestBitmap,
-                                               XOffset, YOffset);
+            Frames[CurrentFrame].Skeleton.Blit(XOffset, YOffset);
         }
     }
 }

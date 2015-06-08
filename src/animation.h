@@ -17,7 +17,7 @@ public:
     void LoadFrameDirectory(std::string Directory);
     void AdvanceFrame();
     //    void InsertFrame(frame Frame, int16 FrameIndex = -1);
-    void Blit(bitmap* DestBitmap, int16 XOffset, int16 YOffset);
+    void Blit(int16 XOffset, int16 YOffset);
 };
 
 #define ANIMATION_H

@@ -9,12 +9,11 @@ skeleton::AttachCollisionBox(collision_box CollisionBox, int16 XPosition, int16 
 }
 
 void
-skeleton::Blit(bitmap* DestBitmap, int16 XOrigin, int16 YOrigin)
+skeleton::Blit(int16 XOrigin, int16 YOrigin)
 {
     uint8 HitboxTransparency = 70;
 
-    SkeletonCrosshair.Blit(DestBitmap,
-                           XOrigin, YOrigin,
+    SkeletonCrosshair.Blit(XOrigin, YOrigin,
                            alignment::Center, alignment::Center);
 #if 0
     for(auto const CollisionBox : CollisionBoxes)
