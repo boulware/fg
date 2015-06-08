@@ -12,9 +12,6 @@ public:
     ~bitmap();
 
     BITMAPINFO Info;
-    uint16 Pitch;
-//    uint32 *Pixels;
-//    std::vector<uint32> Pixels;
     uint32* Pixels;
     uint32 Width;
     uint32 Height;
