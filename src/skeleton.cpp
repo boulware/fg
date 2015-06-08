@@ -1,6 +1,6 @@
 #include "skeleton.h"
 
-sprite skeleton::SkeletonCrosshair("SkeletonCrosshair.png", true);
+sprite skeleton::SkeletonCrosshair(Global::ImagePath + "SkeletonCrosshair.png", true);
 
 void
 skeleton::AttachCollisionBox(collision_box CollisionBox, int16 XPosition, int16 YPosition)
