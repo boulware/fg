@@ -1,0 +1,29 @@
+#if !defined(GAME_H)
+
+#include "Globals.h"
+#include "input_buffer.h"
+
+#include "fighter.h"
+
+class game
+{
+private:
+    input_buffer PrevFrameInput;
+    input_buffer ThisFrameInput;
+    
+    bitmap Buffer;
+    fighter Fighter;
+public:
+    game();
+    bool32 IsRunning;
+
+    bool32 Paused;
+    bool32 AdvancingFrame;
+
+    void HandleInput();
+    void Update();
+    void Blit();
+};
+
+#define GAME_H
+#endif
