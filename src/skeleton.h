@@ -3,18 +3,17 @@
 #include <vector>
 #include <tuple>
 
-#include "bitmap.h"
-
 #include "collision_box.h"
 
 class skeleton
 {
 private:
     std::vector<std::tuple<collision_box, int16, int16>> CollisionBoxes;
-    
-    static sprite SkeletonCrosshair;
+
+    static sf::Texture SkeletonCrosshairTexture;
+    static sf::Sprite SkeletonCrosshairSprite;
 public:
-//    static void Initialize();
+    skeleton();
     
     void AttachCollisionBox(collision_box CollisionBox, int16 XPosition, int16 YPosition);
 

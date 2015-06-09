@@ -5,14 +5,10 @@ game::game()
         PrevFrameInput(),
         ThisFrameInput(),
         Fighter(100, 500),
-//        Buffer(Const::WindowWidth, Const::WindowHeight),
         Paused(false),
         AdvancingFrame(false)
 {   
-    //RECT rc;
-    //GetClientRect(Global::Window, &rc);
-
-    Fighter.Animation.LoadFrameDirectory(Global::ImagePath + "RedSquare/Neutral/");
+    Fighter.Animation.LoadFrameDirectory(Global::ImagePath + "RedSquare/Neutral/", alignment::Center, alignment::Right);
 
     IsRunning = true;
 }
@@ -27,14 +23,16 @@ game::Update()
 void
 game::Blit()
 {
-    //Buffer.Clear({255, 0, 0, 0});
     Global::Window.clear({30, 30, 30, 255});
+
+    sf::RectangleShape Floor({(float)Const::WindowWidth, 1});
+    Floor.setOutlineColor(sf::Color::White);
+    Floor.setPosition(0, 500);
+    Global::Window.draw(Floor);
     
     Fighter.Blit();
 
     Global::Window.display();
-    
-    //Blit::BlitBufferToWindow(&Buffer, Global::Window);
 
     if(AdvancingFrame)
     {
@@ -66,7 +64,5 @@ game::HandleInput()
         }
         Blit();
     }
-    
-//    Blit();
 }
 

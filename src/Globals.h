@@ -4,8 +4,6 @@
 
 #include "Constants.h"
 
-#include "bitmap.h"
-
 #include "SFML/System.hpp"
 #include "SFML/Graphics.hpp"
 
@@ -22,8 +20,6 @@ namespace Global
     global_variable uint16 MaxFrameSkip = 10;
 
     std::string ImagePath = "w:/build/fg/img/";
-
-    bitmap LoadFailBitmap(ImagePath + "LoadFail.png");
 
     bool32 DebugMode = false;
 }

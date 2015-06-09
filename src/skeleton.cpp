@@ -1,6 +1,20 @@
 #include "skeleton.h"
 
-sprite skeleton::SkeletonCrosshair(Global::ImagePath + "SkeletonCrosshair.png", true);
+sf::Texture skeleton::SkeletonCrosshairTexture;
+sf::Sprite skeleton::SkeletonCrosshairSprite;
+
+skeleton::skeleton()
+{
+    static bool IsInitialized = false;
+
+    if(!IsInitialized)
+    {
+        SkeletonCrosshairTexture.loadFromFile(Global::ImagePath + "SkeletonCrosshair.png");
+        SkeletonCrosshairSprite.setTexture(SkeletonCrosshairTexture);
+        
+        Blit::AlignSprite(SkeletonCrosshairSprite, alignment::Center, alignment::Center);
+    }
+}
 
 void
 skeleton::AttachCollisionBox(collision_box CollisionBox, int16 XPosition, int16 YPosition)
@@ -13,9 +27,10 @@ skeleton::Blit(int16 XOrigin, int16 YOrigin)
 {
     uint8 HitboxTransparency = 70;
 
-    SkeletonCrosshair.Blit(XOrigin, YOrigin,
-                           alignment::Center, alignment::Center);
-#if 0
+    SkeletonCrosshairSprite.setPosition(XOrigin, YOrigin);
+    Global::Window.draw(SkeletonCrosshairSprite);
+    
+/*
     for(auto const CollisionBox : CollisionBoxes)
     {
         Blit::BlitRectangleToBitmap(DestBitmap,
@@ -29,5 +44,5 @@ skeleton::Blit(int16 XOrigin, int16 YOrigin)
                                     {HitboxTransparency, 255, 255, 255}, true, true);
 
     }
-#endif
+*/
 }

@@ -13,14 +13,11 @@
 #include "game.h"
 
 #include "win32_Debug.cpp"
-#include "bitmap.cpp"
 #include "Blit.cpp"
-#include "sprite.cpp"
 #include "game.cpp"
 #include "collision_box.cpp"
 #include "skeleton.cpp"
 #include "fighter.cpp"
-#include "Color.cpp"
 #include "animation.cpp"
 
 LRESULT CALLBACK
