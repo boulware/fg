@@ -1,5 +1,15 @@
 #include "win32_Debug.h"
 
+void
+Debug::DisplayCmdLine()
+{
+    AllocConsole();
+    freopen("conin$","r",stdin);
+    freopen("conout$","w",stdout);
+    freopen("conout$","w",stderr);
+    printf("Debugging Window:\n");
+}
+
 template<typename type> void
 Debug::WriteValue(type Value, std::string Label)
 {

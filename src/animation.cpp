@@ -45,10 +45,9 @@ animation::Blit(int16 XOffset, int16 YOffset)
 {
     if(Frames.size() > 0)
     {
-/*        Frames[CurrentFrame].Sprite.Blit(XOffset, YOffset,
-          alignment::Center, alignment::Left);*/
         Frames[CurrentFrame].Sprite.setPosition(XOffset, YOffset);
         Global::Window.draw(Frames[CurrentFrame].Sprite);
+        
         if(Global::DebugMode)
         {
             Frames[CurrentFrame].Skeleton.Blit(XOffset, YOffset);

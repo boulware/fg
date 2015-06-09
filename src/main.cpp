@@ -93,22 +93,10 @@ WinMain(
     LPSTR     CommandLine,
     int       CommandShow)
 {
-    AllocConsole();
-    freopen("conin$","r",stdin);
-    freopen("conout$","w",stdout);
-    freopen("conout$","w",stderr);
-    printf("Debugging Window:\n");
-    
-//    std::ofstream file("sfml-log.txt");
-//    std::streambuf* previous = sf::err().rdbuf(file.rdbuf());
+    Debug::DisplayCmdLine();
     
     Global::Window.create(sf::VideoMode(Const::WindowWidth, Const::WindowHeight, 8 * Const::BytesPerPixel), "fg");
-    Global::Window.display();
-//    timer::Initialize();
-//    Global::Window = SetUpWindow(Instance);
     Global::Game = new game;
-    
-    MSG Message;
 
     uint8 Loops;
     sf::Clock GameClock;
@@ -153,59 +141,6 @@ WinMain(
         Global::Game->Blit(); 
     }
 
-    /*
-      
-      while(Global::Game->IsRunning)
-    {   
-        while(PeekMessage(&Message, Global::Window, 0, 0, PM_REMOVE))
-        {
-            TranslateMessage(&Message);
-            DispatchMessage(&Message);
-        }
-
-//        OutputDebugStringA("HandleInput()\n");
-        
-        if(Global::Game->Paused == false)
-        {
-            Loops = 0;
-            while(GameClock.getElapsedTime() > NextGameTick && Loops < Global::MaxFrameSkip)
-            {
-                Global::Game->HandleInput();
-                Global::Game->Update();
-
-                NextGameTick += Global::FrameTime;
-                Loops++;
-            }
-            
-            Global::Game->Blit();
-        }
-        else
-        {
-            // TODO(tyler): This frame advance does not work with WasPressed things in input_buffer.
-            // Reason unknown. Fix ASAP.
-//            Global::Game->HandleInput();
-            //          Global::Game->Blit();
-
-//            NextGameTick += Global::FrameTime;
-//                Global::Game->HandleInput();
-            while(GameClock.getElapsedTime() > NextGameTick)
-            {
-                Global::Game->HandleInput();
-
-                NextGameTick += Global::FrameTime;
-            }
-/*
-            while(timer::GetProgramTime() > NextGameTick)
-            {
-                Global::Game->HandleInput();
-
-                NextGameTick += Global::FrameTime;
-            }
-        }
-        
-        //Debug::Write(timer::GetProgramTime().GetTime(unit::ms), "Elapsed Time(ms)");
-    }
-    */
     return(0);
 }
 

@@ -5,6 +5,8 @@
 class Debug
 {
 public:
+    static void DisplayCmdLine();
+    
     template<typename type> static void WriteValue(type Value, std::string Label = "");
     static void WriteString(std::string StringToWrite);
     static void WriteError(std::string StringToWrite);
