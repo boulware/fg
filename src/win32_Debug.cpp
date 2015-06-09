@@ -1,5 +1,7 @@
 #include "win32_Debug.h"
 
+#include <iostream>
+
 void
 Debug::DisplayCmdLine()
 {
@@ -13,20 +15,24 @@ Debug::DisplayCmdLine()
 template<typename type> void
 Debug::WriteValue(type Value, std::string Label)
 {
-    // TODO(tyler): Unsafe. If the value is longer than 200 characters, this will segfault.
-    char DebugString[200];
-    sprintf(DebugString, "%s: %9.7f\n", Label, Value);
-    OutputDebugStringA(DebugString);
+    if(std::is_integral<type>())
+    {
+        printf("%s: %d\n", Label.c_str(), Value);
+    }
+    else
+    {
+        printf("%s: %f\n", Label.c_str(), Value);        
+    }
 }
 
 void
 Debug::WriteString(std::string StringToWrite)
 {
-    OutputDebugStringA((LPCTSTR)StringToWrite.c_str());
+    printf(StringToWrite.c_str());
 }
 
 void
 Debug::WriteError(std::string StringToWrite)
 {
-    OutputDebugStringA((LPCTSTR)("ERROR: " + StringToWrite).c_str());    
+    printf(("ERROR: " + StringToWrite + "\n").c_str());
 }
