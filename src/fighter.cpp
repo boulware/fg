@@ -1,7 +1,5 @@
 #include "fighter.h"
 
-#include "Blit.h"
-
 fighter_state::fighter_state(std::string Label, real32 HorizontalSpeed, real32 VerticalSpeed)
         :
         Direction(direction::Neutral),
@@ -168,15 +166,6 @@ fighter::StepPosition()
 {
     X += (int8)(FighterState->Direction) * FighterState->HorizontalSpeed;
     Y += FighterState->VerticalSpeed;
-
-#if 0
-    if(FighterState == NeutralState) Debug::WriteString("StepPosition NeutralState\n");
-    if(FighterState == WalkingState) Debug::WriteString("StepPosition WalkingState\n");
-    if(FighterState == JumpingState) Debug::WriteString("StepPosition JumpingState\n");
-
-    Debug::WriteValue(FighterState->HorizontalSpeed, "HSpeed");
-    Debug::WriteValue(FighterState->VerticalSpeed, "VSpeed");
-#endif
 }
 
 fighter::fighter(real32 X, real32 Y, real32 MoveSpeed)
@@ -184,7 +173,9 @@ fighter::fighter(real32 X, real32 Y, real32 MoveSpeed)
         X(X), Y(Y),
         NeutralState(new fighter_neutral_state),
         WalkingState(new fighter_walking_state(MoveSpeed)),
-        JumpingState(new fighter_jumping_state(MoveSpeed, -20.0f, 1.0f))
+        JumpingState(new fighter_jumping_state(MoveSpeed, -20.0f, 1.0f)),
+        // TODO(tyler): Move sprite to fighter states.
+        Sprite(Global::ImagePath + "RedSquare/Neutral/.ani")
 {   
     FighterState = NeutralState;
 }
@@ -215,11 +206,11 @@ fighter::Update()
     FighterState->Update(this);
     StepPosition();
 
-    Animation.AdvanceFrame();
+    Sprite.AdvanceFrame();
 }
 
 void
 fighter::Blit()
 {
-    Animation.Blit(X, Y);
+    Sprite.Draw(X, Y);
 }

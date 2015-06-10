@@ -10,8 +10,7 @@ class game
 private:
     input_buffer PrevFrameInput;
     input_buffer ThisFrameInput;
-    
-//    bitmap Buffer;
+
     sf::RenderTexture Buffer_;
     fighter Fighter;
 public:

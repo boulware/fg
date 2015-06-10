@@ -13,12 +13,11 @@
 #include "game.h"
 
 #include "win32_Debug.cpp"
-#include "Blit.cpp"
 #include "game.cpp"
 #include "collision_box.cpp"
 #include "skeleton.cpp"
 #include "fighter.cpp"
-#include "animation.cpp"
+#include "sprite.cpp"
 
 LRESULT CALLBACK
 MainWindowProc(HWND Window, UINT Message, WPARAM WParam, LPARAM LParam)

@@ -6,11 +6,9 @@ game::game()
         ThisFrameInput(),
         Fighter(100, 500),
         Paused(false),
-        AdvancingFrame(false)
+        AdvancingFrame(false),
+        IsRunning(true)
 {   
-    Fighter.Animation.LoadFrameDirectory(Global::ImagePath + "RedSquare/Neutral/", alignment::Center, alignment::Right);
-
-    IsRunning = true;
 }
 
 void

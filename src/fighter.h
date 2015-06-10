@@ -1,7 +1,7 @@
 #if !defined(FIGHTER_H)
 
 #include "input_buffer.h"
-#include "animation.h"
+#include "sprite.h"
 
 class fighter;
 
@@ -21,6 +21,8 @@ public:
     direction Direction;
     real32 HorizontalSpeed;
     real32 VerticalSpeed;
+
+    std::vector<sprite> Sprites;
 
     fighter_state(std::string Label, real32 HorizontalSpeed = 0.0f, real32 VerticalSpeed = 0.0f);
     
@@ -79,12 +81,12 @@ private:
     fighter_neutral_state* NeutralState;
     fighter_walking_state* WalkingState;
     fighter_jumping_state* JumpingState;
+
+    sprite Sprite;
 public:
+    
     fighter(real32, real32, real32 MoveSpeed = 6.0f);
     ~fighter();
-
-    // TODO(tyler): Make this private.
-    animation Animation;
     
     void HandleInput(input_buffer* Input);
     void Update();
