@@ -1,6 +1,6 @@
 #if !defined(CONSTANTS_H)
 
-#include <stdint.h>
+#include <cstdint>
 
 #define global_variable static;
 
