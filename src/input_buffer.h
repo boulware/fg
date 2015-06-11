@@ -44,6 +44,13 @@ struct input_buffer
     button Jump;
     button Crouch;
 
+    button LP;
+    button MP;
+    button HP;
+    button LK;
+    button MK;
+    button HK;
+    
     button FrameStop;
     button FrameAdvance;
 
@@ -59,7 +66,13 @@ input_buffer::input_buffer()
         Jump(0x26), Crouch(0x28),
         FrameStop(VK_F1),
         FrameAdvance(VK_F2),
-        HitboxToggle(VK_F5)
+        HitboxToggle(VK_F5),
+        LP(VK_NUMPAD4),
+        MP(VK_NUMPAD5),
+        HP(VK_NUMPAD6),
+        LK(VK_NUMPAD1),
+        MK(VK_NUMPAD2),
+        HK(VK_NUMPAD3)
 {
     Buttons.push_back(&MoveLeft);
     Buttons.push_back(&MoveRight);
@@ -68,6 +81,12 @@ input_buffer::input_buffer()
     Buttons.push_back(&FrameStop);
     Buttons.push_back(&FrameAdvance);
     Buttons.push_back(&HitboxToggle);
+    Buttons.push_back(&LP);
+    Buttons.push_back(&MP);
+    Buttons.push_back(&HP);
+    Buttons.push_back(&LK);
+    Buttons.push_back(&MK);
+    Buttons.push_back(&HK);
 }
 
 input_buffer input_buffer::operator=(const input_buffer& rhs)
