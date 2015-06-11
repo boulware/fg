@@ -254,7 +254,8 @@ fighter_standing_light_punch_state::fighter_standing_light_punch_state()
         :
         fighter_state("sLP")
 {
-    AddSprite(face_direction::right, "RedSquare/sLP/neutral/.ani", false);
+    AddSprite(face_direction::right, "RedSquare/sLP/face_right/.ani", false);
+    AddSprite(face_direction::left, "RedSquare/sLP/face_left/.ani", false);
 }
 
 void
