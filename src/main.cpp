@@ -119,7 +119,6 @@ WinMain(
             while(GameClock.getElapsedTime() > NextGameTick && Loops < Global::MaxFrameSkip)
             {
                 Global::Game->HandleInput();
-                Global::Game->Update();
 
                 NextGameTick += Global::FrameTime;
                 Loops++;
@@ -127,9 +126,6 @@ WinMain(
         }
         else
         {
-            // TODO(tyler): This frame advance does not work with WasPressed things in input_buffer.
-            // Reason: We are updating input every 1/60s, regardless of frame speed.
-            
             Global::Game->HandleInput();
 
             NextGameTick = GameClock.getElapsedTime();

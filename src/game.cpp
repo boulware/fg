@@ -12,7 +12,6 @@ game::game()
 void
 game::Update()
 {   
-    Fighter.HandleInput(ThisFrameInput);
     Fighter.Update();
 }
 
@@ -41,13 +40,7 @@ void
 game::HandleInput()
 {
     FetchAndParseInput(&ThisLoopInput, &PrevLoopInput);
-
-    if(!Paused)
-    {
-        ThisFrameInput = ThisLoopInput;
-        PrevFrameInput = PrevLoopInput;
-    }
-    
+  
     if(ThisLoopInput.FrameStop.WasPressed)
     {
         Paused = !Paused;
@@ -57,15 +50,23 @@ game::HandleInput()
     {
         Global::DebugMode = !Global::DebugMode;
     }
-
-    
+  
     if(Paused)
     {
         if(ThisLoopInput.FrameAdvance.WasPressed)
         {
-            Update();
             FetchAndParseInput(&ThisFrameInput, &PrevFrameInput);
+            Fighter.HandleInput(ThisFrameInput);
+            Update();            
         }
+    }
+    else
+    {
+        ThisFrameInput = ThisLoopInput;
+        PrevFrameInput = PrevLoopInput;
+
+        Fighter.HandleInput(ThisFrameInput);
+        Update();
     }
 }
 
