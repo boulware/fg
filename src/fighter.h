@@ -8,21 +8,32 @@ class fighter;
 class fighter_state
 {
 protected:
-    enum class sub_state : int8
+    enum class face_direction : int8
     {
+        left,
+        right,
+    };
+    enum class move_direction : int8
+    {
+        left,
+        right,
         neutral,
-        moving_left,
-        moving_right,
-     };
+    };
 private:
-    sub_state SubState;
+    face_direction FaceDirection;
+    move_direction MoveDirection;
 protected:
     virtual void InvalidState() { Debug::WriteError("State in invalid substate (" + Label + ")"); }
 
-    std::map<sub_state, sprite> Sprites;
-    void AddSprite(sub_state SpriteSubState, std::string SpriteFilepath, bool Loops = true) { Sprites.insert(std::pair<sub_state, sprite>(SpriteSubState, {SpriteFilepath, Loops})); }
-    void SetSubState(sub_state NewSubState, bool32 ResetSprite = true);
-    sub_state GetSubState() { return SubState; }
+    std::map<face_direction, sprite> Sprites;
+    void AddSprite(face_direction SpriteFaceDirection, std::string SpriteFilepath, bool Loops = true) { Sprites.insert(std::pair<face_direction, sprite>(SpriteFaceDirection, {SpriteFilepath, Loops})); }
+    
+    void SetFaceDirection(face_direction NewFaceDirection);
+    void SetMoveDirection(move_direction NewMoveDirection);
+    face_direction GetFaceDirection() { return FaceDirection; }
+    move_direction GetMoveDirection() { return MoveDirection; }
+
+    sprite& GetCurrentSprite();
 public:
     real32 BaseXSpeed;
     real32 BaseYSpeed;
