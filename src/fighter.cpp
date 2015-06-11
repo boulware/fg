@@ -40,6 +40,15 @@ fighter_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 }
 
 void
+fighter_state::Exit(fighter &Fighter)
+{
+    if(Global::DebugMode)
+    {
+        Debug::WriteDebug("Exiting state: " + Label);
+    }
+}
+
+void
 fighter_state::Update(fighter &Fighter)
 {
     Sprites.at(SubState).AdvanceFrame();
@@ -74,6 +83,10 @@ fighter_neutral_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 fighter_state*
 fighter_neutral_state::HandleInput(fighter& Fighter, input_buffer& Input)
 {
+    if(Input.LP.WasPressed)
+    {
+        return &Fighter.StandingLPState;
+    }
     if(Input.MoveLeft.IsDown && !Input.MoveRight.IsDown)
     {
         SetSubState(sub_state::moving_left, false);
@@ -226,6 +239,27 @@ fighter_jumping_state::Update(fighter& Fighter)
     }
 }
 
+fighter_standing_light_punch_state::fighter_standing_light_punch_state()
+        :
+        fighter_state("sLP")
+{
+    AddSprite(sub_state::neutral, Global::ImagePath + "RedSquare/sLP/neutral/.ani", false);
+}
+
+void
+fighter_standing_light_punch_state::Update(fighter& Fighter)
+{
+    fighter_state::Update(Fighter);
+}
+
+fighter_state*
+fighter_standing_light_punch_state::HandleInput(fighter& Fighter, input_buffer& Input)
+{
+    if(Sprites.at(GetSubState()).GetAnimationEnded()) return &Fighter.NeutralState;
+
+    return nullptr;
+}
+
 void
 fighter::StepPosition()
 {
@@ -265,12 +299,10 @@ fighter::Update()
 {
     FighterState->Update(*this);
     StepPosition();
-//    Sprite.AdvanceFrame();
 }
 
 void
 fighter::Draw()
 {
     FighterState->Draw(X, Y);
-//    Debug::WriteLine("(" + std::to_string(X) + ", " + std::to_string(Y) + ")");
 }

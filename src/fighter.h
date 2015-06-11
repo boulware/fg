@@ -20,7 +20,7 @@ protected:
     virtual void InvalidState() { Debug::WriteError("State in invalid substate (" + Label + ")"); }
 
     std::map<sub_state, sprite> Sprites;
-    void AddSprite(sub_state SpriteSubState, std::string SpriteFilepath) { Sprites.insert(std::pair<sub_state, sprite>(SpriteSubState, {SpriteFilepath})); }
+    void AddSprite(sub_state SpriteSubState, std::string SpriteFilepath, bool Loops = true) { Sprites.insert(std::pair<sub_state, sprite>(SpriteSubState, {SpriteFilepath, Loops})); }
     void SetSubState(sub_state NewSubState, bool32 ResetSprite = true);
     sub_state GetSubState() { return SubState; }
 public:
@@ -37,7 +37,7 @@ public:
     virtual void Enter(fighter& Fighter, fighter_state& PreviousState);
     virtual fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) = 0;
     virtual void Update(fighter& Fighter);
-    virtual void Exit(fighter& Fighter) {}
+    virtual void Exit(fighter& Fighter);
 
     void Draw(int16 X, int16 Y);
 };
@@ -79,12 +79,23 @@ public:
     void Update(fighter& Fighter) override;
 };
 
+class fighter_standing_light_punch_state : public fighter_state
+{
+private:
+public:
+    fighter_standing_light_punch_state();
+
+    fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) override;
+    void Update(fighter& Fighter) override;
+};
+
 class fighter
 {
     friend class fighter_state;
     friend class fighter_neutral_state;
     friend class fighter_walking_state;
     friend class fighter_jumping_state;
+    friend class fighter_standing_light_punch_state;
 protected:
     void StepPosition();
 private:
@@ -96,6 +107,7 @@ private:
     fighter_neutral_state NeutralState;
     fighter_walking_state WalkingState;
     fighter_jumping_state JumpingState;
+    fighter_standing_light_punch_state StandingLPState;
 public:    
     fighter(real32, real32, real32 MoveSpeed = 6.0f);
     ~fighter();
