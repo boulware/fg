@@ -2,12 +2,17 @@
 
 #include <fstream>
 
-sprite::sprite(std::string SpriteFilepath, bool32 Loops)
+const std::string sprite::ImagePath = "w:/build/fg/img/";
+sprite sprite::LoadFailSprite("LoadFail.png", false);
+
+sprite::sprite(std::string RelativeSpriteFilepath, bool32 Loops)
         :
         Loops(Loops),
         AnimationEnded(false),
         CurrentFrame(0)
-{    
+{
+    std::string SpriteFilepath = ImagePath + RelativeSpriteFilepath;
+    Debug::WriteLine(ImagePath);
     std::string FileExtension = SpriteFilepath.substr(SpriteFilepath.find_last_of(".") + 1, std::string::npos);
 
     if(FileExtension == "ani")
@@ -58,6 +63,12 @@ sprite::sprite(std::string SpriteFilepath, bool32 Loops)
         }
 
         Debug::WriteLine("Loaded " + std::to_string(LineNumber) + " textures from " + SpriteFilepath);
+    }
+    else if(FileExtension == "png")
+    {
+        Textures.push_back({{SpriteFilepath}});
+
+        Debug::WriteLine("Loaded 1 texture from " + SpriteFilepath);
     }
     else
     {

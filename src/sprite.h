@@ -3,6 +3,7 @@
 #include <string>
 
 #include "Constants.h"
+#include "win32_debug.h"
 
 class sprite
 {
@@ -12,7 +13,7 @@ private:
         sf::Texture SFMLTexture;
         sf::Vector2f DrawOrigin;
 
-        texture(std::string TextureFilepath, sf::Vector2f DrawOrigin)
+        texture(std::string TextureFilepath, sf::Vector2f DrawOrigin = {0, 0})
                 :
                 DrawOrigin(DrawOrigin)
         {
@@ -27,7 +28,10 @@ private:
     bool32 AnimationEnded;
     
     uint16 CurrentFrame;
+
+    static const std::string ImagePath;
 public:
+    
     sprite(std::string SpriteFilepath, bool32 Loops = true);
     sprite(const sprite& Other);
 
@@ -37,6 +41,8 @@ public:
     void Draw(int16, int16);
 
     bool32 GetAnimationEnded() { return AnimationEnded; }
+
+    static sprite LoadFailSprite;
 };
 
 #define SPRITE_H
