@@ -3,6 +3,9 @@
 #include <iostream>
 
 uint32 Debug::DebugCount = 0;
+uint32 Debug::ErrorCount = 0;
+bool32 Debug::StartedUp = false;
+std::string Debug::StartupErrors = "Startup:\n";
 
 void
 Debug::DisplayCmdLine()
@@ -11,7 +14,10 @@ Debug::DisplayCmdLine()
     freopen("conin$","r",stdin);
     freopen("conout$","w",stdout);
     freopen("conout$","w",stderr);
-    printf("Debugging Window:\n");
+    printf(StartupErrors.c_str());
+    printf("---main starts----\n");
+    
+    StartedUp = true;
 }
 
 template<typename type> void
@@ -30,23 +36,57 @@ Debug::WriteValue(type Value, std::string Label)
 void
 Debug::WriteString(std::string StringToWrite)
 {
-    printf(StringToWrite.c_str());
+    if(StartedUp)
+    {    
+        printf(StringToWrite.c_str());
+    }
+    else
+    {
+        StartupErrors += StringToWrite;
+    }
 }
 
 void
 Debug::WriteLine(std::string StringToWrite)
 {
-    printf((StringToWrite + "\n").c_str());
+    std::string FullString = StringToWrite + "\n";
+    
+    if(StartedUp)
+    {
+        printf(FullString.c_str());
+    }
+    else
+    {
+        StartupErrors += FullString;
+    }
 }
 
 void
 Debug::WriteError(std::string StringToWrite)
 {
-    printf(("ERROR: " + StringToWrite + "\n").c_str());
+    std::string FullString = "ERROR[" + std::to_string(ErrorCount++) + "]: " + StringToWrite + "\n";
+    
+    if(StartedUp)
+    {
+        printf(FullString.c_str());
+    }
+    else
+    {
+        StartupErrors += FullString;
+    }
 }
 
 void
 Debug::WriteDebug(std::string StringToWrite)
 {
-    printf(("DEBUG[" + std::to_string(DebugCount++) + "]: " + StringToWrite + "\n").c_str());
+    std::string FullString = "DEBUG[" + std::to_string(DebugCount++) + "]: " + StringToWrite + "\n";
+    
+    if(StartedUp)
+    {
+        printf(FullString.c_str());
+    }
+    else
+    {
+        StartupErrors += FullString;
+    }
 }
