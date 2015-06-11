@@ -14,7 +14,7 @@ game::game()
 void
 game::Update()
 {   
-    Fighter.HandleInput(&ThisFrameInput);
+    Fighter.HandleInput(ThisFrameInput);
     Fighter.Update();
 }
 
@@ -28,7 +28,7 @@ game::Blit()
     Floor.setPosition(0, 500);
     Global::Window.draw(Floor);
     
-    Fighter.Blit();
+    Fighter.Draw();
 
     Global::Window.display();
 

@@ -5,63 +5,78 @@
 
 class fighter;
 
-enum class direction : int8
-{
-    Left = -1,
-    Neutral = 0,
-    Right = 1,
-    Undefined = 42,
-};
-
 class fighter_state
 {
+protected:
+    enum class sub_state : int8
+    {
+        neutral,
+        moving_left,
+        moving_right,
+     };
+private:
+    sub_state SubState;
+protected:
+    virtual void InvalidState() { Debug::WriteError("State in invalid substate (" + Label + ")"); }
+
+    std::map<sub_state, sprite> Sprites;
+    void AddSprite(sub_state SpriteSubState, std::string SpriteFilepath) { Sprites.insert(std::pair<sub_state, sprite>(SpriteSubState, {SpriteFilepath})); }
+    void SetSubState(sub_state NewSubState, bool32 ResetSprite = true);
+    sub_state GetSubState() { return SubState; }
 public:
+    real32 BaseXSpeed;
+    real32 BaseYSpeed;
+    
+    real32 XSpeed;
+    real32 YSpeed;
+    
     std::string Label;
-    
-    direction Direction;
-    real32 HorizontalSpeed;
-    real32 VerticalSpeed;
 
-    std::vector<sprite> Sprites;
-
-    fighter_state(std::string Label, real32 HorizontalSpeed = 0.0f, real32 VerticalSpeed = 0.0f);
+    fighter_state(std::string Label, real32 BaseXSpeed = 0, real32 BaseYSpeed = 0);
     
-    virtual void Enter(fighter* Fighter) {};    
-    virtual fighter_state* HandleInput(fighter* Fighter, input_buffer* Input) = 0;
-    virtual void Update(fighter* Fighter) {};
-    virtual void Exit(fighter* Fighter, fighter_state* NewState);
+    virtual void Enter(fighter& Fighter, fighter_state& PreviousState);
+    virtual fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) = 0;
+    virtual void Update(fighter& Fighter);
+    virtual void Exit(fighter& Fighter) {}
+
+    void Draw(int16 X, int16 Y);
 };
 
 class fighter_neutral_state : public fighter_state
 {
+private:
 public:
     fighter_neutral_state();
-    fighter_state* HandleInput(fighter*, input_buffer*);
+ 
+    void Enter(fighter& Fighter, fighter_state& PreviousState) override;
+    fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) override;    
 };
 
 class fighter_walking_state : public fighter_state
 {
+private:
 public:
     fighter_walking_state(real32 HorizontalSpeed);
-    fighter_state* HandleInput(fighter*, input_buffer*);
-    void Update(fighter* Fighter);
+    
+    void Enter(fighter& Fighter, fighter_state& PreviousState) override;
+    fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) override;
 };
 
 class fighter_jumping_state : public fighter_state
 {
-public:
-//    void Enter(fighter*);
-    void Enter(fighter* Fighter);
-    fighter_jumping_state(real32 HorizontalSpeed, real32 InitialVerticalSpeed, real32 VerticalAcceleration);
-    fighter_state* HandleInput(fighter*, input_buffer*);
-    void Update(fighter*);
 private:
     bool32 Landed;
-    
-    real32 InitialVerticalSpeed;
+
+    real32 InitialYSpeed;
     real32 VerticalAcceleration;
 
     bool32 FastFall;
+public:
+    fighter_jumping_state(real32 HorizontalSpeed, real32 InitialVerticalSpeed, real32 VerticalAcceleration);
+    
+    void Enter(fighter& Fighter, fighter_state& PreviousState) override;
+    fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) override;
+    void Update(fighter& Fighter) override;
 };
 
 class fighter
@@ -78,19 +93,16 @@ private:
 
     fighter_state* FighterState;
     
-    fighter_neutral_state* NeutralState;
-    fighter_walking_state* WalkingState;
-    fighter_jumping_state* JumpingState;
-
-    sprite Sprite;
-public:
-    
+    fighter_neutral_state NeutralState;
+    fighter_walking_state WalkingState;
+    fighter_jumping_state JumpingState;
+public:    
     fighter(real32, real32, real32 MoveSpeed = 6.0f);
     ~fighter();
     
-    void HandleInput(input_buffer* Input);
+    void HandleInput(input_buffer& Input);
     void Update();
-    void Blit();
+    void Draw();
 };
 
 #define FIGHTER_H

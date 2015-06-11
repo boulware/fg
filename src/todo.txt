@@ -1,5 +1,7 @@
 *Implement spritesheet loading for animation/frames
 *Implement loading fighters from files
+*Check out a non-virtual interface for fighter_state class
+       (Having to explicitly call Update() in each child class's overridden Update() is a bug-prone)
 
 Potential optimization issues
 *Resizing sprite texture bounding box every time the texture is changed (which is every frame for every sprite)

@@ -1,106 +1,144 @@
 #include "fighter.h"
 
-fighter_state::fighter_state(std::string Label, real32 HorizontalSpeed, real32 VerticalSpeed)
+void
+fighter_state::SetSubState(sub_state NewSubState, bool32 ResetSprite)
+{
+    SubState = NewSubState;
+
+    if(ResetSprite)
+    {
+        try
+        {
+            Sprites.at(NewSubState).Reset();
+        }
+        catch(...)
+        {
+            Debug::WriteError("Tried to reset sub-state sprite for which a sprite did not exist (" + Label + ").");
+        }
+    }
+}
+
+fighter_state::fighter_state(std::string Label, real32 BaseXSpeed, real32 BaseYSpeed)
         :
-        Direction(direction::Neutral),
         Label(Label),
-        HorizontalSpeed(HorizontalSpeed),
-        VerticalSpeed(VerticalSpeed)
+        BaseXSpeed(BaseXSpeed),
+        BaseYSpeed(BaseYSpeed),
+        XSpeed(0),
+        YSpeed(0),
+        SubState(sub_state::neutral)
 {
 }
 
 void
-fighter_state::Exit(fighter* Fighter, fighter_state* NewState)
+fighter_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 {
-    NewState->Direction = Direction;
+    SetSubState(PreviousState.SubState);
+    if(Global::DebugMode)
+    {
+        Debug::WriteDebug("Entering state: " + Label);
+    }
+}
+
+void
+fighter_state::Update(fighter &Fighter)
+{
+    Sprites.at(SubState).AdvanceFrame();
+}
+
+void
+fighter_state::Draw(int16 X, int16 Y)
+{
+    try
+    {
+        Sprites.at(SubState).Draw(X, Y);
+    }
+    catch(...)
+    {
+        Debug::WriteError("Tried to draw sub-state sprite for which one did not exist (" + Label + ").");
+    }
 }
 
 fighter_neutral_state::fighter_neutral_state()
         :
         fighter_state("neutral")
 {
+    AddSprite(sub_state::neutral, Global::ImagePath + "RedSquare/neutral/neutral/.ani");
+}
+
+void
+fighter_neutral_state::Enter(fighter& Fighter, fighter_state& PreviousState)
+{
+    SetSubState(sub_state::neutral);
 }
 
 fighter_state*
-fighter_neutral_state::HandleInput(fighter* Fighter, input_buffer* Input)
+fighter_neutral_state::HandleInput(fighter& Fighter, input_buffer& Input)
 {
-    if(Input->Jump.IsDown)
+    if(Input.MoveLeft.IsDown && !Input.MoveRight.IsDown)
+    {
+        SetSubState(sub_state::moving_left, false);
+    }
+    if(Input.MoveRight.IsDown && !Input.MoveLeft.IsDown)
+    {
+        SetSubState(sub_state::moving_right, false);
+    }
+    if(Input.Jump.IsDown)
     {   
-        if(Input->MoveLeft.IsDown && !Input->MoveRight.IsDown)
-        {
-            Direction = direction::Left;
-        }
-        else if(Input->MoveRight.IsDown && !Input->MoveLeft.IsDown)
-        {
-            Direction = direction::Right;
-        }
-        else
-        {
-            Direction = direction::Neutral;
-        }
-
-        return Fighter->JumpingState;
+        return &Fighter.JumpingState;
     }
-    if(Input->MoveLeft.IsDown && !Input->MoveRight.IsDown)
-    {
-        Direction = direction::Left;
-        
-        return Fighter->WalkingState;
-    }
-    if(Input->MoveRight.IsDown && !Input->MoveLeft.IsDown)
-    {
-        Direction = direction::Right;
-        
-        return Fighter->WalkingState;
-    }
+    if(GetSubState() != sub_state::neutral) return &Fighter.WalkingState;
     
     return nullptr;
 }
 
-fighter_walking_state::fighter_walking_state(real32 HorizontalSpeed)
+fighter_walking_state::fighter_walking_state(real32 BaseXSpeed)
         :
-        fighter_state("walk", HorizontalSpeed)
+        fighter_state("walk", BaseXSpeed)
 {
+    AddSprite(sub_state::moving_left, Global::ImagePath + "RedSquare/walk/moving_left/.ani");
+    AddSprite(sub_state::moving_right, Global::ImagePath + "RedSquare/walk/moving_right/.ani");    
 }
 
 void
-fighter_walking_state::Update(fighter* Fighter)
+fighter_walking_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 {
-    switch(Direction)
+    fighter_state::Enter(Fighter, PreviousState);
+    switch(GetSubState())
     {
-        case(direction::Left):
+        case(sub_state::moving_left):
         {
+            XSpeed = -BaseXSpeed;
         } break;
-        case(direction::Right):
+        case(sub_state::moving_right):
         {
+            XSpeed = BaseXSpeed;
         } break;
         default:
         {
-            Debug::WriteString("Walking state is corrupted!\n");
-        } break;
+            InvalidState();
+        }
     }
 }
 
 fighter_state*
-fighter_walking_state::HandleInput(fighter* Fighter, input_buffer* Input)
+fighter_walking_state::HandleInput(fighter& Fighter, input_buffer& Input)
 {
-    if(Input->Jump.IsDown) return Fighter->JumpingState;
-    
-    switch(Direction)
+    if(Input.Jump.IsDown) return &Fighter.JumpingState;
+
+    switch(GetSubState())
     {
-        case(direction::Left):
+        case(sub_state::moving_left):
         {
-            if(!Input->MoveLeft.IsDown) return Fighter->NeutralState;
-            if(Input->MoveRight.IsDown) return Fighter->NeutralState;
+            if(!Input.MoveLeft.IsDown || Input.MoveRight.IsDown) return &Fighter.NeutralState;
         } break;
-        case(direction::Right):
+        case(sub_state::moving_right):
         {
-            if(!Input->MoveRight.IsDown) return Fighter->NeutralState;
-            if(Input->MoveLeft.IsDown) return Fighter->NeutralState;
+            if(!Input.MoveRight.IsDown || Input.MoveLeft.IsDown) return &Fighter.NeutralState;
         } break;
         default:
         {
-            Debug::WriteString("Invalid direction in fighter_walking_state\n");
+            InvalidState();
+            return &Fighter.NeutralState;
         } break;
     }
     
@@ -108,55 +146,82 @@ fighter_walking_state::HandleInput(fighter* Fighter, input_buffer* Input)
 }
 
 void
-fighter_jumping_state::Enter(fighter* Fighter)
+fighter_jumping_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 {
-    VerticalSpeed = InitialVerticalSpeed;
+    fighter_state::Enter(Fighter, PreviousState);
+        
+    switch(GetSubState())
+    {
+        case(sub_state::neutral):
+        {
+            XSpeed = 0;
+        } break;
+        case(sub_state::moving_left):
+        {
+            XSpeed = -BaseXSpeed;
+        } break;
+        case(sub_state::moving_right):
+        {
+            XSpeed = BaseXSpeed;
+        } break;
+        default:
+        {
+            InvalidState();
+        } break;
+    }
+    
+    YSpeed = InitialYSpeed;
     FastFall = false;
     Landed = false;
 }
 
 fighter_jumping_state::fighter_jumping_state(real32 HorizontalSpeed,
-                                             real32 InitialVerticalSpeed, real32 VerticalAcceleration)
+                                             real32 InitialYSpeed, real32 VerticalAcceleration)
         :
-        fighter_state("jump", HorizontalSpeed, InitialVerticalSpeed),
+        fighter_state("jump", HorizontalSpeed, InitialYSpeed),
         Landed(false),
-        InitialVerticalSpeed(InitialVerticalSpeed),
+        InitialYSpeed(InitialYSpeed),
         VerticalAcceleration(VerticalAcceleration),
         FastFall(false)
 {
+    AddSprite(sub_state::neutral, Global::ImagePath + "RedSquare/jump/neutral/.ani");
+    AddSprite(sub_state::moving_left, Global::ImagePath + "RedSquare/jump/moving_left/.ani");
+    AddSprite(sub_state::moving_right, Global::ImagePath + "RedSquare/jump/moving_right/.ani");
 }
 
 fighter_state*
-fighter_jumping_state::HandleInput(fighter* Fighter, input_buffer* Input)
+fighter_jumping_state::HandleInput(fighter& Fighter, input_buffer& Input)
 {   
     if(Landed)
     {
-        return Fighter->NeutralState;
+        return &Fighter.NeutralState;
     }
-    if(Input->Crouch.IsDown)
+    if(Input.Crouch.IsDown)
     {
-        if(VerticalSpeed >= 0) FastFall = true;
+        if(YSpeed >= 0) FastFall = true;
     }
 
     return nullptr;
 }
 
 void
-fighter_jumping_state::Update(fighter* Fighter)
+fighter_jumping_state::Update(fighter& Fighter)
 {
+    fighter_state::Update(Fighter);
+    
     if(!FastFall)
     {
-        VerticalSpeed += VerticalAcceleration;
+        YSpeed += VerticalAcceleration;
     }
     else
     {
-        VerticalSpeed += 4*VerticalAcceleration;
+        YSpeed += 4*VerticalAcceleration;
     }
     
-    if(Fighter->Y + VerticalSpeed >= 500 && VerticalSpeed > 0)
+    if(Fighter.Y + YSpeed >= 500 && YSpeed > 0)
     {
-        Fighter->Y = 500;
-        VerticalSpeed = 0;
+        Fighter.Y = 500;
+        YSpeed = 0;
         Landed = true;
     }
 }
@@ -164,53 +229,48 @@ fighter_jumping_state::Update(fighter* Fighter)
 void
 fighter::StepPosition()
 {
-    X += (int8)(FighterState->Direction) * FighterState->HorizontalSpeed;
-    Y += FighterState->VerticalSpeed;
+    X += FighterState->XSpeed;
+    Y += FighterState->YSpeed;
 }
 
 fighter::fighter(real32 X, real32 Y, real32 MoveSpeed)
         :
         X(X), Y(Y),
-        NeutralState(new fighter_neutral_state),
-        WalkingState(new fighter_walking_state(MoveSpeed)),
-        JumpingState(new fighter_jumping_state(MoveSpeed, -20.0f, 1.0f)),
-        // TODO(tyler): Move sprite to fighter states.
-        Sprite(Global::ImagePath + "RedSquare/Neutral/.ani")
+        NeutralState(),
+        WalkingState(fighter_walking_state(MoveSpeed)),
+        JumpingState(fighter_jumping_state(MoveSpeed, -20.0f, 1.0f))
 {   
-    FighterState = NeutralState;
+    FighterState = &NeutralState;
 }
 
 fighter::~fighter()
 {
-    delete NeutralState;
-    delete WalkingState;
-    delete JumpingState;
 }
 
 void
-fighter::HandleInput(input_buffer* Input)
+fighter::HandleInput(input_buffer& Input)
 {
-    fighter_state* NewState = FighterState->HandleInput(this, Input);
+    fighter_state* NewState = FighterState->HandleInput(*this, Input);
 
     if(NewState)
     {
-        FighterState->Exit(this, NewState);
+        FighterState->Exit(*this);
+        NewState->Enter(*this, *FighterState);
         FighterState = NewState;
-        FighterState->Enter(this);
     }
 }
 
 void
 fighter::Update()
 {
-    FighterState->Update(this);
+    FighterState->Update(*this);
     StepPosition();
-
-    Sprite.AdvanceFrame();
+//    Sprite.AdvanceFrame();
 }
 
 void
-fighter::Blit()
+fighter::Draw()
 {
-    Sprite.Draw(X, Y);
+    FighterState->Draw(X, Y);
+//    Debug::WriteLine("(" + std::to_string(X) + ", " + std::to_string(Y) + ")");
 }

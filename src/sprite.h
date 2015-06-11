@@ -29,6 +29,7 @@ public:
     sprite(std::string SpriteFilepath);
     sprite(const sprite& Other);
 
+    void Reset() { CurrentFrame = 0; }
     void UpdateTexture();
     void AdvanceFrame();
     void Draw(int16, int16);
