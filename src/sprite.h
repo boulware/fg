@@ -3,7 +3,6 @@
 #include <string>
 
 #include "Constants.h"
-//#include "skeleton.h"
 
 class sprite
 {
@@ -35,30 +34,5 @@ public:
     void Draw(int16, int16);
 };
 
-/*
-class sprite
-{
-private:
-    // TODO(tyler): This can probably be optimized to a fixed-size structure if needed.
-    std::vector<frame> Frames;
-    uint16 CurrentFrame;
-
-    sf::Sprite SFMLSprite;
-public:
-    sprite(std::string SpriteFilepath);
-
-    void AppendFrame(std::string Filename);
-    void AdvanceFrame();
-    void Blit(int16 XOffset, int16 YOffset);
-
-    virtual void LoadSpriteFromFile(std::string SpriteFilepath);
-};
-
-class collision_sprite : public sprite
-{
-public:
-    void LoadSpriteFromFile(std::string SpriteFilepath);
-};
-*/
 #define SPRITE_H
 #endif
