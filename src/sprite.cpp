@@ -12,7 +12,6 @@ sprite::sprite(std::string RelativeSpriteFilepath, bool32 Loops)
         CurrentFrame(0)
 {
     std::string SpriteFilepath = ImagePath + RelativeSpriteFilepath;
-    Debug::WriteLine(ImagePath);
     std::string FileExtension = SpriteFilepath.substr(SpriteFilepath.find_last_of(".") + 1, std::string::npos);
 
     if(FileExtension == "ani")

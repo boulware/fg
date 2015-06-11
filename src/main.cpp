@@ -139,7 +139,5 @@ WinMain(
         
         Global::Game->Blit(); 
     }
-
-    return(0);
 }
 
