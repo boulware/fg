@@ -32,6 +32,12 @@ Debug::WriteString(std::string StringToWrite)
 }
 
 void
+Debug::WriteLine(std::string StringToWrite)
+{
+    printf((StringToWrite + "\n").c_str());
+}
+
+void
 Debug::WriteError(std::string StringToWrite)
 {
     printf(("ERROR: " + StringToWrite + "\n").c_str());
