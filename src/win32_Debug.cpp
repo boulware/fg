@@ -2,6 +2,8 @@
 
 #include <iostream>
 
+uint32 Debug::DebugCount = 0;
+
 void
 Debug::DisplayCmdLine()
 {
@@ -41,4 +43,10 @@ void
 Debug::WriteError(std::string StringToWrite)
 {
     printf(("ERROR: " + StringToWrite + "\n").c_str());
+}
+
+void
+Debug::WriteDebug(std::string StringToWrite)
+{
+    printf(("DEBUG[" + std::to_string(DebugCount++) + "]: " + StringToWrite + "\n").c_str());
 }

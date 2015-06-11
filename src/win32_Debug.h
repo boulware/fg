@@ -11,6 +11,9 @@ public:
     static void WriteString(std::string StringToWrite);
     static void WriteLine(std::string StringToWrite);
     static void WriteError(std::string StringToWrite);
+    static void WriteDebug(std::string StringToWrite);
+
+    static uint32 DebugCount;
 };
 
 #define WIN32_DEBUG_H
