@@ -128,13 +128,11 @@ WinMain(
         else
         {
             // TODO(tyler): This frame advance does not work with WasPressed things in input_buffer.
-            // Reason unknown. Fix ASAP.
-            while(GameClock.getElapsedTime() > NextGameTick)
-            {
-                Global::Game->HandleInput();
+            // Reason: We are updating input every 1/60s, regardless of frame speed.
+            
+            Global::Game->HandleInput();
 
-                NextGameTick += Global::FrameTime;
-            }
+            NextGameTick = GameClock.getElapsedTime();
         }
         
         Global::Game->Blit(); 

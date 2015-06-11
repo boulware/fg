@@ -2,8 +2,6 @@
 
 game::game()
         :
-        PrevFrameInput(),
-        ThisFrameInput(),
         Fighter(100, 500),
         Paused(false),
         AdvancingFrame(false),
@@ -42,25 +40,32 @@ game::Blit()
 void
 game::HandleInput()
 {
-    FetchAndParseInput(&ThisFrameInput, &PrevFrameInput);
+    FetchAndParseInput(&ThisLoopInput, &PrevLoopInput);
 
-    if(ThisFrameInput.HitboxToggle.WasPressed)
+    if(!Paused)
     {
-        Global::DebugMode = !Global::DebugMode;
+        ThisFrameInput = ThisLoopInput;
+        PrevFrameInput = PrevLoopInput;
     }
     
-    if(ThisFrameInput.FrameStop.WasPressed)
+    if(ThisLoopInput.FrameStop.WasPressed)
     {
         Paused = !Paused;
     }
+
+    if(ThisLoopInput.HitboxToggle.WasPressed)
+    {
+        Global::DebugMode = !Global::DebugMode;
+    }
+
+    
     if(Paused)
     {
-        if(ThisFrameInput.FrameAdvance.WasPressed)
+        if(ThisLoopInput.FrameAdvance.WasPressed)
         {
-            HandleInput();
             Update();
+            FetchAndParseInput(&ThisFrameInput, &PrevFrameInput);
         }
-        Blit();
     }
 }
 

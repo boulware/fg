@@ -7,9 +7,12 @@
 
 class game
 {
-private:
+private:    
     input_buffer PrevFrameInput;
     input_buffer ThisFrameInput;
+
+    input_buffer PrevLoopInput;
+    input_buffer ThisLoopInput;
 
     sf::RenderTexture Buffer_;
     fighter Fighter;
