@@ -35,7 +35,7 @@ public:
     fighter_state(std::string Label, real32 BaseXSpeed = 0, real32 BaseYSpeed = 0);
     
     virtual void Enter(fighter& Fighter, fighter_state& PreviousState);
-    virtual fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) = 0;
+    virtual fighter_state* HandleInput(fighter& Fighter, const input_buffer& Input) = 0;
     virtual void Update(fighter& Fighter);
     virtual void Exit(fighter& Fighter);
 
@@ -49,7 +49,7 @@ public:
     fighter_neutral_state();
  
     void Enter(fighter& Fighter, fighter_state& PreviousState) override;
-    fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) override;    
+    fighter_state* HandleInput(fighter& Fighter, const input_buffer& Input) override;    
 };
 
 class fighter_walking_state : public fighter_state
@@ -59,7 +59,7 @@ public:
     fighter_walking_state(real32 HorizontalSpeed);
     
     void Enter(fighter& Fighter, fighter_state& PreviousState) override;
-    fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) override;
+    fighter_state* HandleInput(fighter& Fighter, const input_buffer& Input) override;
 };
 
 class fighter_jumping_state : public fighter_state
@@ -75,7 +75,7 @@ public:
     fighter_jumping_state(real32 HorizontalSpeed, real32 InitialVerticalSpeed, real32 VerticalAcceleration);
     
     void Enter(fighter& Fighter, fighter_state& PreviousState) override;
-    fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) override;
+    fighter_state* HandleInput(fighter& Fighter, const input_buffer& Input) override;
     void Update(fighter& Fighter) override;
 };
 
@@ -85,7 +85,7 @@ private:
 public:
     fighter_standing_light_punch_state();
 
-    fighter_state* HandleInput(fighter& Fighter, input_buffer& Input) override;
+    fighter_state* HandleInput(fighter& Fighter, const input_buffer& Input) override;
     void Update(fighter& Fighter) override;
 };
 

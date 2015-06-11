@@ -81,7 +81,7 @@ fighter_neutral_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 }
 
 fighter_state*
-fighter_neutral_state::HandleInput(fighter& Fighter, input_buffer& Input)
+fighter_neutral_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 {
     if(Input.LP.WasPressed)
     {
@@ -134,7 +134,7 @@ fighter_walking_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 }
 
 fighter_state*
-fighter_walking_state::HandleInput(fighter& Fighter, input_buffer& Input)
+fighter_walking_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 {
     if(Input.Jump.IsDown) return &Fighter.JumpingState;
 
@@ -203,7 +203,7 @@ fighter_jumping_state::fighter_jumping_state(real32 HorizontalSpeed,
 }
 
 fighter_state*
-fighter_jumping_state::HandleInput(fighter& Fighter, input_buffer& Input)
+fighter_jumping_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 {   
     if(Landed)
     {
@@ -253,7 +253,7 @@ fighter_standing_light_punch_state::Update(fighter& Fighter)
 }
 
 fighter_state*
-fighter_standing_light_punch_state::HandleInput(fighter& Fighter, input_buffer& Input)
+fighter_standing_light_punch_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 {
     if(Sprites.at(GetSubState()).GetAnimationEnded()) return &Fighter.NeutralState;
 
