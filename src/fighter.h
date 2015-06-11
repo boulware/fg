@@ -27,8 +27,8 @@ public:
     real32 BaseXSpeed;
     real32 BaseYSpeed;
     
-    real32 XSpeed;
-    real32 YSpeed;
+    real32 CurrentXSpeed;
+    real32 CurrentYSpeed;
     
     std::string Label;
 

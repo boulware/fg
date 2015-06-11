@@ -23,8 +23,8 @@ fighter_state::fighter_state(std::string Label, real32 BaseXSpeed, real32 BaseYS
         Label(Label),
         BaseXSpeed(BaseXSpeed),
         BaseYSpeed(BaseYSpeed),
-        XSpeed(0),
-        YSpeed(0),
+        CurrentXSpeed(0),
+        CurrentYSpeed(0),
         SubState(sub_state::neutral)
 {
 }
@@ -107,11 +107,11 @@ fighter_walking_state::Enter(fighter& Fighter, fighter_state& PreviousState)
     {
         case(sub_state::moving_left):
         {
-            XSpeed = -BaseXSpeed;
+            CurrentXSpeed = -BaseXSpeed;
         } break;
         case(sub_state::moving_right):
         {
-            XSpeed = BaseXSpeed;
+            CurrentXSpeed = BaseXSpeed;
         } break;
         default:
         {
@@ -154,15 +154,15 @@ fighter_jumping_state::Enter(fighter& Fighter, fighter_state& PreviousState)
     {
         case(sub_state::neutral):
         {
-            XSpeed = 0;
+            CurrentXSpeed = 0;
         } break;
         case(sub_state::moving_left):
         {
-            XSpeed = -BaseXSpeed;
+            CurrentXSpeed = -BaseXSpeed;
         } break;
         case(sub_state::moving_right):
         {
-            XSpeed = BaseXSpeed;
+            CurrentXSpeed = BaseXSpeed;
         } break;
         default:
         {
@@ -170,7 +170,7 @@ fighter_jumping_state::Enter(fighter& Fighter, fighter_state& PreviousState)
         } break;
     }
     
-    YSpeed = InitialYSpeed;
+    CurrentYSpeed = InitialYSpeed;
     FastFall = false;
     Landed = false;
 }
@@ -198,7 +198,7 @@ fighter_jumping_state::HandleInput(fighter& Fighter, input_buffer& Input)
     }
     if(Input.Crouch.IsDown)
     {
-        if(YSpeed >= 0) FastFall = true;
+        if(CurrentYSpeed >= 0) FastFall = true;
     }
 
     return nullptr;
@@ -211,17 +211,17 @@ fighter_jumping_state::Update(fighter& Fighter)
     
     if(!FastFall)
     {
-        YSpeed += VerticalAcceleration;
+        CurrentYSpeed += VerticalAcceleration;
     }
     else
     {
-        YSpeed += 4*VerticalAcceleration;
+        CurrentYSpeed += 4*VerticalAcceleration;
     }
     
-    if(Fighter.Y + YSpeed >= 500 && YSpeed > 0)
+    if(Fighter.Y + CurrentYSpeed >= 500 && CurrentYSpeed > 0)
     {
         Fighter.Y = 500;
-        YSpeed = 0;
+        CurrentYSpeed = 0;
         Landed = true;
     }
 }
@@ -229,8 +229,8 @@ fighter_jumping_state::Update(fighter& Fighter)
 void
 fighter::StepPosition()
 {
-    X += FighterState->XSpeed;
-    Y += FighterState->YSpeed;
+    X += FighterState->CurrentXSpeed;
+    Y += FighterState->CurrentYSpeed;
 }
 
 fighter::fighter(real32 X, real32 Y, real32 MoveSpeed)
