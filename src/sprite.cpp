@@ -2,8 +2,10 @@
 
 #include <fstream>
 
-sprite::sprite(std::string SpriteFilepath)
+sprite::sprite(std::string SpriteFilepath, bool32 Loops)
         :
+        Loops(Loops),
+        AnimationEnded(false),
         CurrentFrame(0)
 {    
     std::string FileExtension = SpriteFilepath.substr(SpriteFilepath.find_last_of(".") + 1, std::string::npos);
@@ -70,6 +72,8 @@ sprite::sprite(std::string SpriteFilepath)
 
 sprite::sprite(const sprite& Other)
         :
+        Loops(Other.Loops),
+        AnimationEnded(Other.AnimationEnded),
         Textures(Other.Textures),
         CurrentFrame(0)
 {
@@ -95,11 +99,24 @@ sprite::UpdateTexture()
 void
 sprite::AdvanceFrame()
 {
-    if(++CurrentFrame >= Textures.size()) CurrentFrame = 0;
+    if(Loops)
+    {
+        if(++CurrentFrame >= Textures.size()) CurrentFrame = 0;
 
-    texture& FrameTexture = Textures[CurrentFrame];
-
-    UpdateTexture();
+        UpdateTexture();
+    }
+    else
+    {
+        if(CurrentFrame != Textures.size() - 1)
+        {
+            CurrentFrame++;
+            UpdateTexture();
+        }
+        else
+        {
+            AnimationEnded = true;
+        }
+    }
 }
 
 void

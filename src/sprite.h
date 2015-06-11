@@ -23,15 +23,20 @@ private:
     std::vector<texture> Textures;
     sf::Sprite SFMLSprite;
 
+    bool32 Loops;
+    bool32 AnimationEnded;
+    
     uint16 CurrentFrame;
 public:
-    sprite(std::string SpriteFilepath);
+    sprite(std::string SpriteFilepath, bool32 Loops = true);
     sprite(const sprite& Other);
 
-    void Reset() { CurrentFrame = 0; }
+    void Reset() { CurrentFrame = 0; AnimationEnded = false; }
     void UpdateTexture();
     void AdvanceFrame();
     void Draw(int16, int16);
+
+    bool32 GetAnimationEnded() { return AnimationEnded; }
 };
 
 #define SPRITE_H
