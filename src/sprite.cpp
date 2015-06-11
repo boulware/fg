@@ -55,7 +55,7 @@ sprite::sprite(std::string SpriteFilepath)
             Textures.push_back({{CurrentDirectory + ImageName + ".png", DrawOrigin}});
         }
 
-        Debug::WriteString("Loaded " + std::to_string(LineNumber) + " textures from " + SpriteFilepath);
+        Debug::WriteLine("Loaded " + std::to_string(LineNumber) + " textures from " + SpriteFilepath);
     }
     else
     {
@@ -64,7 +64,7 @@ sprite::sprite(std::string SpriteFilepath)
 
     if(CurrentFrame < Textures.size())
     {
-        SFMLSprite.setTexture(Textures[CurrentFrame].SFMLTexture, true);
+        UpdateTexture();
     }
 }
 
@@ -75,171 +75,36 @@ sprite::sprite(const sprite& Other)
 {
     if(CurrentFrame < Textures.size())
     {
-        SFMLSprite.setTexture(Textures[CurrentFrame].SFMLTexture, true);
+        UpdateTexture();
     }
 }
 
-void sprite::AdvanceFrame()
+void
+sprite::UpdateTexture()
 {
-    if(++CurrentFrame >= Textures.size()) CurrentFrame = 0;
-
-    texture& FrameTexture = Textures[CurrentFrame];
-    
-    SFMLSprite.setTexture(FrameTexture.SFMLTexture, true);
-    SFMLSprite.setOrigin(FrameTexture.DrawOrigin);
-}
-
-void sprite::Draw(int16 X, int16 Y)
-{
-    SFMLSprite.setPosition(X, Y);
-    Global::Window.draw(SFMLSprite);
-}
-    
-
-//sprite::AdvanceFrame(
-
-/*
-collision_sprite::collision_sprite(std::string SpriteFilepath)
-        :
-        sprite(SpriteFilepath)
-{
-    
-    std::string FileExtension = SpriteFilepath.substr(SpriteFilepath.find_last_of(".") + 1, std::string::npos);
-
-    if(FileExtension == "ani")
+    if(SFMLSprite.getTexture() != &Textures[CurrentFrame].SFMLTexture)
     {
-        std::string CurrentDirectory = SpriteFilepath;
-        CurrentDirectory.erase(SpriteFilepath.find_last_of("/") + 1, std::string::npos);
-        std::string FrameData;
-    
-        std::ifstream In;
-        In.open(SpriteFilepath);
+        texture& CurrentFrameTexture = Textures[CurrentFrame];
 
-        uint16 LineNumber = 0;
-    
-        while(In.good())
-        {
-            In >> FrameData;
-            LineNumber++;
-
-            std::string ImageName = FrameData.substr(0, FrameData.find_first_of("("));
-        
-            std::string DrawOriginString; // "(x,y)"
-            DrawOriginString = FrameData.substr(FrameData.find_first_of("("), FrameData.find_first_of(")"));
-            sf::Vector2<int16> DrawOrigin;
-            if(DrawOriginString == "()")
-            {
-                if(Frames.size() != 0)
-                {
-                    DrawOrigin = (sf::Vector2<int16>)Frames[Frames.size() - 1].Texture.DrawOrigin;
-                }
-                else
-                {
-                    Debug::WriteError(SpriteFilepath + " corrupted on LINE " + std::to_string(LineNumber) + ". DrawOrigin invalid");
-                }
-            }
-            else
-            {            
-                DrawOrigin.x = std::stoi(DrawOriginString.substr(DrawOriginString.find_first_of("(") + 1, DrawOriginString.find_first_of(",") - 1));
-                DrawOrigin.y = std::stoi(DrawOriginString.substr(DrawOriginString.find_first_of(",") + 1, DrawOriginString.find_first_of(")") - 1));
-            }
-
-            Frames.push_back({{CurrentDirectory + ImageName + ".png", DrawOrigin}});
-        }
-    }
-    else
-    {
-        Debug::WriteError("Tried to open invalid sprite file (" + SpriteFilepath + ")");
+        SFMLSprite.setTexture(CurrentFrameTexture.SFMLTexture, true);
+        SFMLSprite.setOrigin(CurrentFrameTexture.DrawOrigin);
     }
 }
-
-
-#include <string>
-#include <fstream>
-
-sprite::sprite(std::string SpriteFilepath)
-        :
-        CurrentFrame(0)
-{
-    LoadSpriteFromFile(SpriteFilepath);
-}
+    
 
 void
 sprite::AdvanceFrame()
 {
-    if(++CurrentFrame >= Frames.size()) CurrentFrame = 0;
+    if(++CurrentFrame >= Textures.size()) CurrentFrame = 0;
+
+    texture& FrameTexture = Textures[CurrentFrame];
+
+    UpdateTexture();
 }
 
 void
-sprite::Blit(int16 XOffset, int16 YOffset)
+sprite::Draw(int16 X, int16 Y)
 {
-    if(Frames.size() > 0)
-    {
-        SFMLSprite.setPosition(XOffset, YOffset);
-        SFMLSprite.setTexture(Frames[CurrentFrame].Texture.SFMLTexture);
-//        Frames[CurrentFrame].Sprite.setPosition(XOffset, YOffset);
-        SFMLSprite.setPosition(XOffset, YOffset);
-        SFMLSprite.setOrigin((sf::Vector2f)Frames[CurrentFrame].Texture.DrawOrigin);
-        Global::Window.draw(SFMLSprite);
-        
-        if(Global::DebugMode)
-        {
-//            Frames[CurrentFrame].Skeleton.Blit(XOffset, YOffset);
-        }
-    }
+    SFMLSprite.setPosition(X, Y);
+    Global::Window.draw(SFMLSprite);
 }
-
-void sprite::LoadSpriteFromFile(std::string Filepath)
-{
-    if(!Frames.empty()) Frames.clear();
-    
-    std::string FileExtension = Filepath.substr(Filepath.find_last_of(".") + 1, std::string::npos);
-
-    if(FileExtension == "ani")
-    {
-        std::string CurrentDirectory = Filepath;
-        CurrentDirectory.erase(Filepath.find_last_of("/") + 1, std::string::npos);
-        std::string FrameData;
-    
-        std::ifstream In;
-        In.open(Filepath);
-
-        uint16 LineNumber = 0;
-    
-        while(In.good())
-        {
-            In >> FrameData;
-            LineNumber++;
-
-            std::string ImageName = FrameData.substr(0, FrameData.find_first_of("("));
-        
-            std::string DrawOriginString; // "(x,y)"
-            DrawOriginString = FrameData.substr(FrameData.find_first_of("("), FrameData.find_first_of(")"));
-            sf::Vector2<int16> DrawOrigin;
-            if(DrawOriginString == "()")
-            {
-                if(Frames.size() != 0)
-                {
-                    DrawOrigin = (sf::Vector2<int16>)Frames[Frames.size() - 1].Texture.DrawOrigin;
-                }
-                else
-                {
-                    Debug::WriteError(Filepath + " corrupted on LINE " + std::to_string(LineNumber) + ". DrawOrigin invalid");
-                }
-            }
-            else
-            {            
-                DrawOrigin.x = std::stoi(DrawOriginString.substr(DrawOriginString.find_first_of("(") + 1, DrawOriginString.find_first_of(",") - 1));
-                DrawOrigin.y = std::stoi(DrawOriginString.substr(DrawOriginString.find_first_of(",") + 1, DrawOriginString.find_first_of(")") - 1));
-            }
-
-            Frames.push_back({{CurrentDirectory + ImageName + ".png", DrawOrigin}});
-        }
-    }
-}
-
-void collision_sprite::LoadSpriteFromFile(std::string SpriteFilepath)
-{
-    
-}
-*/
