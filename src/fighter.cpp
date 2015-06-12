@@ -86,6 +86,8 @@ fighter_neutral_state::fighter_neutral_state()
 void
 fighter_neutral_state::Enter(fighter &Fighter, fighter_state& PreviousState)
 {
+    fighter_state::Enter(Fighter, PreviousState);
+    
     SetMoveDirection(move_direction::neutral);
 }
 
@@ -267,7 +269,23 @@ fighter_standing_light_punch_state::Update(fighter& Fighter)
 fighter_state*
 fighter_standing_light_punch_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 {
-    if(GetCurrentSprite().GetAnimationEnded()) return &Fighter.NeutralState;
+    if(GetCurrentSprite().GetAnimationEnded())
+    {
+        if(Input.MoveLeft.IsDown)
+        {
+            SetFaceDirection(face_direction::left);
+            SetMoveDirection(move_direction::left);
+            return &Fighter.WalkingState;
+        }
+        if(Input.MoveRight.IsDown)
+        {
+            SetFaceDirection(face_direction::right);
+            SetMoveDirection(move_direction::right);
+            return &Fighter.WalkingState;
+        }
+        
+        return &Fighter.NeutralState;
+    }
 
     return nullptr;
 }
