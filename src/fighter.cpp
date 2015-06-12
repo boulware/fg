@@ -3,7 +3,7 @@
 #include "Globals.h"
 
 void
-fighter_state::SetFaceDirection(face_direction NewFaceDirection)
+fighter::fighter_state::SetFaceDirection(face_direction NewFaceDirection)
 {   
     FaceDirection = NewFaceDirection;
 
@@ -11,12 +11,12 @@ fighter_state::SetFaceDirection(face_direction NewFaceDirection)
 }
 
 void
-fighter_state::SetMoveDirection(move_direction NewMoveDirection)
+fighter::fighter_state::SetMoveDirection(move_direction NewMoveDirection)
 {
     MoveDirection = NewMoveDirection;
 }
 
-sprite& fighter_state::GetCurrentSprite()
+sprite& fighter::fighter_state::GetCurrentSprite()
 {
     try
     {
@@ -31,7 +31,7 @@ sprite& fighter_state::GetCurrentSprite()
     }
 }
 
-fighter_state::fighter_state(std::string Label, real32 BaseXSpeed, real32 BaseYSpeed)
+fighter::fighter_state::fighter_state(std::string Label, real32 BaseXSpeed, real32 BaseYSpeed)
         :
         Label(Label),
         BaseXSpeed(BaseXSpeed),
@@ -44,7 +44,7 @@ fighter_state::fighter_state(std::string Label, real32 BaseXSpeed, real32 BaseYS
 }
 
 void
-fighter_state::Enter(fighter& Fighter, fighter_state& PreviousState)
+fighter::fighter_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 {
     SetMoveDirection(PreviousState.MoveDirection);
     SetFaceDirection(PreviousState.FaceDirection);
@@ -55,7 +55,7 @@ fighter_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 }
 
 void
-fighter_state::Exit(fighter &Fighter)
+fighter::fighter_state::Exit(fighter &Fighter)
 {
     if(Global::DebugMode)
     {
@@ -64,18 +64,18 @@ fighter_state::Exit(fighter &Fighter)
 }
 
 void
-fighter_state::Update(fighter &Fighter)
+fighter::fighter_state::Update(fighter &Fighter)
 {
     GetCurrentSprite().AdvanceFrame();
 }
 
 void
-fighter_state::Draw(int16 X, int16 Y)
+fighter::fighter_state::Draw(int16 X, int16 Y)
 {
     GetCurrentSprite().Draw(X, Y);
 }
 
-fighter_neutral_state::fighter_neutral_state()
+fighter::fighter_neutral_state::fighter_neutral_state()
         :
         fighter_state("neutral")
 {
@@ -84,15 +84,15 @@ fighter_neutral_state::fighter_neutral_state()
 }
 
 void
-fighter_neutral_state::Enter(fighter &Fighter, fighter_state& PreviousState)
+fighter::fighter_neutral_state::Enter(fighter &Fighter, fighter_state& PreviousState)
 {
     fighter_state::Enter(Fighter, PreviousState);
     
     SetMoveDirection(move_direction::neutral);
 }
 
-fighter_state*
-fighter_neutral_state::HandleInput(fighter& Fighter, const input_buffer& Input)
+fighter::fighter_state*
+fighter::fighter_neutral_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 {
     if(Input.LP.WasPressed)
     {
@@ -117,7 +117,7 @@ fighter_neutral_state::HandleInput(fighter& Fighter, const input_buffer& Input)
     return nullptr;
 }
 
-fighter_walking_state::fighter_walking_state(real32 BaseXSpeed)
+fighter::fighter_walking_state::fighter_walking_state(real32 BaseXSpeed)
         :
         fighter_state("walk", BaseXSpeed)
 {
@@ -126,7 +126,7 @@ fighter_walking_state::fighter_walking_state(real32 BaseXSpeed)
 }
 
 void
-fighter_walking_state::Enter(fighter& Fighter, fighter_state& PreviousState)
+fighter::fighter_walking_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 {
     fighter_state::Enter(Fighter, PreviousState);
     
@@ -147,8 +147,8 @@ fighter_walking_state::Enter(fighter& Fighter, fighter_state& PreviousState)
     }
 }
 
-fighter_state*
-fighter_walking_state::HandleInput(fighter& Fighter, const input_buffer& Input)
+fighter::fighter_state*
+fighter::fighter_walking_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 {
     if(Input.Jump.IsDown) return &Fighter.JumpingState;
 
@@ -173,7 +173,7 @@ fighter_walking_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 }
 
 void
-fighter_jumping_state::Enter(fighter& Fighter, fighter_state& PreviousState)
+fighter::fighter_jumping_state::Enter(fighter& Fighter, fighter_state& PreviousState)
 {
     fighter_state::Enter(Fighter, PreviousState);
 
@@ -202,7 +202,7 @@ fighter_jumping_state::Enter(fighter& Fighter, fighter_state& PreviousState)
     Landed = false;
 }
 
-fighter_jumping_state::fighter_jumping_state(real32 HorizontalSpeed,
+fighter::fighter_jumping_state::fighter_jumping_state(real32 HorizontalSpeed,
                                              real32 InitialYSpeed, real32 VerticalAcceleration)
         :
         fighter_state("jump", HorizontalSpeed, InitialYSpeed),
@@ -215,8 +215,8 @@ fighter_jumping_state::fighter_jumping_state(real32 HorizontalSpeed,
     AddSprite(face_direction::right, "RedSquare/jump/face_right/.ani");
 }
 
-fighter_state*
-fighter_jumping_state::HandleInput(fighter& Fighter, const input_buffer& Input)
+fighter::fighter_state*
+fighter::fighter_jumping_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 {   
     if(Landed)
     {
@@ -231,7 +231,7 @@ fighter_jumping_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 }
 
 void
-fighter_jumping_state::Update(fighter& Fighter)
+fighter::fighter_jumping_state::Update(fighter& Fighter)
 {
     fighter_state::Update(Fighter);
     
@@ -252,7 +252,7 @@ fighter_jumping_state::Update(fighter& Fighter)
     }
 }
 
-fighter_standing_light_punch_state::fighter_standing_light_punch_state()
+fighter::fighter_standing_light_punch_state::fighter_standing_light_punch_state()
         :
         fighter_state("sLP")
 {
@@ -261,13 +261,13 @@ fighter_standing_light_punch_state::fighter_standing_light_punch_state()
 }
 
 void
-fighter_standing_light_punch_state::Update(fighter& Fighter)
+fighter::fighter_standing_light_punch_state::Update(fighter& Fighter)
 {
     fighter_state::Update(Fighter);
 }
 
-fighter_state*
-fighter_standing_light_punch_state::HandleInput(fighter& Fighter, const input_buffer& Input)
+fighter::fighter_state*
+fighter::fighter_standing_light_punch_state::HandleInput(fighter& Fighter, const input_buffer& Input)
 {
     if(GetCurrentSprite().GetAnimationEnded())
     {
